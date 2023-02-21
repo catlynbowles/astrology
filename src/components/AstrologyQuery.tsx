@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { useContext } from "react";
 import { useAuth } from "../context/AppContext";
 
 
@@ -24,7 +23,7 @@ export default function AstrologyQuery() {
         <option value="yesterday">yesterday</option>
         <option value="tomorrow">tomorrow</option>
       </select>
-      <Link href="/results">
+      <Link href={`/horoscope/${sign}/${day}`}>
         <button className="bg-black text-white m-5 p-1 hover:bg-white hover:text-black">
           *star search*
         </button>
