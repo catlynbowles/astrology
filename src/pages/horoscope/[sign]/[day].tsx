@@ -14,16 +14,6 @@ const HoroscopeDefaultValues = {
   color: "",
 };
 
-// export type HoroscopeType = {
-//   current_date: string;
-//   description: string;
-//   compatibility: string;
-//   lucky_number: string;
-//   mood: string;
-//   lucky_time: string;
-//   color: string;
-// };
-
 export default function Results() {
   const [loading, setLoading] = useState(true);
   const [results, setHoroscopeResults] = useState(HoroscopeDefaultValues);
@@ -34,23 +24,18 @@ export default function Results() {
   console.log(sign, day);
 
   useEffect(() => {
+    var randomSign = signs[Math.floor(Math.random() * signs.length)];
+
     if (sign && day) {
-      fetchHoroscopeData(sign, day).then((data) => {
-        setHoroscopeResults(data);
+      Promise.all([
+        fetchHoroscopeData(sign, day),
+        fetchHoroscopeData(randomSign, day),
+      ]).then((data) => {
+        setHoroscopeResults(data[0])
+        setRandomResults(data[1]);
       });
     }
   }, [sign, day]);
-
-  useEffect(() => {
-    var randomSign = signs[Math.floor(Math.random() * signs.length)];
-    console.log(randomSign);
-    if (sign && day) {
-      fetchHoroscopeData(randomSign, day).then((data) => {
-        console.log(data);
-        setRandomResults(data);
-      });
-    }
-  }, [sign]);
 
   return (
     <div>
