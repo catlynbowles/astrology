@@ -1,31 +1,55 @@
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { fetchHoroscopeData } from "../../api/fetch";
+import { signs } from "@/pages/api/data";
 import Loading from "@/components/Loading";
+
+const HoroscopeDefaultValues = {
+  current_date: "",
+  description: "",
+  compatibility: "",
+  lucky_number: "",
+  mood: "",
+  lucky_time: "",
+  color: "",
+};
+
+// export type HoroscopeType = {
+//   current_date: string;
+//   description: string;
+//   compatibility: string;
+//   lucky_number: string;
+//   mood: string;
+//   lucky_time: string;
+//   color: string;
+// };
 
 export default function Results() {
   const [loading, setLoading] = useState(true);
-  const [results, setResults] = useState({
-    current_date: "",
-    description: "",
-    compatibility: "",
-    lucky_number: "",
-    mood: "",
-    lucky_time: "",
-    color: ""
-  });
+  const [results, setHoroscopeResults] = useState(HoroscopeDefaultValues);
+  const [randomResults, setRandomResults] = useState(HoroscopeDefaultValues);
 
   const router = useRouter();
   const { sign, day } = router.query;
   console.log(sign, day);
 
   useEffect(() => {
-    fetchHoroscopeData(sign, day)
-      .then((data) => {
-        setResults(data);
-        setLoading(false);
-      })
-      .then((it) => console.log(it));
+    if (sign && day) {
+      fetchHoroscopeData(sign, day).then((data) => {
+        setHoroscopeResults(data);
+      });
+    }
+  }, [sign, day]);
+
+  useEffect(() => {
+    var randomSign = signs[Math.floor(Math.random() * signs.length)];
+    console.log(randomSign);
+    if (sign && day) {
+      fetchHoroscopeData(randomSign, day).then((data) => {
+        console.log(data);
+        setRandomResults(data);
+      });
+    }
   }, [sign]);
 
   return (
