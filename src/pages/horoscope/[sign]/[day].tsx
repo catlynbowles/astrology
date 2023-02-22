@@ -1,5 +1,5 @@
 import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { fetchHoroscopeData } from "../../api/fetch";
 import { signs } from "@/pages/api/data";
 import Loading from "@/components/Loading";
@@ -15,24 +15,26 @@ const HoroscopeDefaultValues = {
 };
 
 export default function Results() {
+  const randomSign = useRef("");
   const [loading, setLoading] = useState(true);
   const [results, setHoroscopeResults] = useState(HoroscopeDefaultValues);
-  const [randomResults, setRandomResults] = useState(HoroscopeDefaultValues);
+  const [decoyResults, setDecoyResults] = useState(HoroscopeDefaultValues);
 
   const router = useRouter();
   const { sign, day } = router.query;
-  console.log(sign, day);
 
   useEffect(() => {
-    var randomSign = signs[Math.floor(Math.random() * signs.length)];
-
     if (sign && day) {
+      let arr = signs.filter((symbol) => symbol !== sign);
+      randomSign.current = arr[Math.floor(Math.random() * arr.length)];
+
       Promise.all([
         fetchHoroscopeData(sign, day),
-        fetchHoroscopeData(randomSign, day),
+        fetchHoroscopeData(randomSign.current, day),
       ]).then((data) => {
-        setHoroscopeResults(data[0])
-        setRandomResults(data[1]);
+        setHoroscopeResults(data[0]);
+        setDecoyResults(data[1]);
+        setLoading(false);
       });
     }
   }, [sign, day]);
