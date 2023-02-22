@@ -3,7 +3,6 @@ import { signs, days } from "@/pages/api/data";
 import Dropdown from "./Dropdown";
 
 export default function AstrologyQuery() {
-  // const { sign, day, setSign, setDay } = useAuth();
   const [sign, setSign] = useState("");
   const [day, setDay] = useState("");
 
