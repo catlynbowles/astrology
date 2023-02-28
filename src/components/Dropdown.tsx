@@ -1,16 +1,16 @@
 type DropdownProps = {
   items: string[];
-  setChange: (e: string) => void;
+  setSign: (e: string) => void;
   placeholder: string;
 };
 
 export default function Dropdown({
   items,
-  setChange,
+  setSign,
   placeholder,
 }: DropdownProps) {
   return (
-    <select onChange={(e) => setChange(e.target.value)} required>
+    <select onChange={(e) => setSign(e.target.value)} required>
       <option value="">{placeholder}</option>
       {items.map((item, index) => (
         <option value={item} key={index}>{item}</option>

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { collection, getDocs } from "firebase/firestore";
 import { db } from "@/firebase";
-import Form from "./Form";
+import Form from "./Homepage";
 
 export default function AstrologyQuery({ user }: any) {
   const [signs, setSigns] = useState([]);
@@ -12,7 +12,6 @@ export default function AstrologyQuery({ user }: any) {
       console.log(doc.data().user);
       console.log(user.uid);
       if (doc.data().user === user.uid) {
-        
         console.log("hey");
       }
       // if (doc.)
