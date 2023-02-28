@@ -1,4 +1,3 @@
-import { Inter } from "@next/font/google";
 import styles from "@/styles/Home.module.css";
 import AstrologyQuery from "@/components/AstrologyQuery";
 import { onAuthStateChanged, signInWithPopup } from "firebase/auth";

@@ -1,50 +1,32 @@
-import { useState } from "react";
-import { signs, days } from "@/pages/api/data";
-import Dropdown from "./Dropdown";
-import { addDoc, collection } from "firebase/firestore";
+import { useEffect, useState } from "react";
+import { collection, getDocs } from "firebase/firestore";
 import { db } from "@/firebase";
-import { userAgent } from "next/server";
+import Form from "./Form";
 
 export default function AstrologyQuery({ user }: any) {
-  const [sign, setSign] = useState("");
-  const [day, setDay] = useState("");
-  console.log(user)
+  const [signs, setSigns] = useState([]);
 
-  const addUserSign = async (e: any) => {
-    e.preventDefault();
-    console.log(user);
-    if (user) {
-      const docRef = await addDoc(collection(db, "sign"), {
-        user: user.uid,
-        sign: sign,
-      });
-      console.log("Document written with ID: ", docRef.id);
-    } else {
-      console.error("Error adding document: ", e);
-    }
+  const getSigns = async () => {
+    const querySnapshot = await getDocs(collection(db, "sign"));
+    querySnapshot.forEach((doc) => {
+      console.log(doc.data().user);
+      console.log(user.uid);
+      if (doc.data().user === user.uid) {
+        
+        console.log("hey");
+      }
+      // if (doc.)
+      // doc.data() is never undefined for query doc snapshots
+      console.log(doc.id, " => ", doc.data());
+    });
   };
 
-  return (
-    <form
-      // action={`/horoscope/${sign}/${day}`}
-      className="flex flex-col items-center"
-    >
-      <label className="text-3xl">Which stars will you align today?</label>
-      <br />
-      <Dropdown
-        items={signs}
-        setChange={setSign}
-        placeholder="what's your sign?"
-      />
-      <br />
-      {/* <Dropdown items={days} setChange={setDay} placeholder="select a day" /> */}
-      <button
-        onClick={(e) => addUserSign(e)}
-        type="submit"
-        className="bg-black text-white m-5 p-1 hover:bg-white hover:text-black"
-      >
-        *star search*
-      </button>
-    </form>
-  );
+  useEffect(() => {
+    getSigns();
+  }, []);
+
+  return <Form user={user} />;
+}
+function setDoc(arg0: any, data: any) {
+  throw new Error("Function not implemented.");
 }
