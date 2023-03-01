@@ -1,10 +1,26 @@
 import { db } from "@/firebase";
-import { signs } from "@/pages/api/data";
-import { sign } from "crypto";
-import { addDoc, collection } from "firebase/firestore";
+import { sign } from "crypto"; 
+import { addDoc, collection, getDocs } from "firebase/firestore";
+import { useState, useEffect } from "react";
 import Dropdown from "./Dropdown";
+import { getZodiacs } from "@/pages/api/getZodiacs";
 
 export default function Form({ user, setSign }: any) {
+  const [zodiacs, setZodiacs] = useState([]);
+  // const zodiacs = useRef([]);
+
+  const getZodiacs = async () => {
+    const querySnapshot = await getDocs(collection(db, "horoscopes"));
+    querySnapshot.forEach((doc) => {
+      setZodiacs(doc.data().zodiacs);
+      // zodiacs.current = doc.data().zodiacs;
+    });
+  };
+
+  useEffect(() => {
+    getZodiacs();
+  }, [zodiacs]);
+
   const addUserSign = async (e: any) => {
     e.preventDefault();
     if (user) {
@@ -24,11 +40,7 @@ export default function Form({ user, setSign }: any) {
     >
       <label className="text-3xl">Which stars will you align today?</label>
       <br />
-      <Dropdown
-        items={signs}
-        setSign={setSign}
-        placeholder="what's your sign?"
-      />
+      <Dropdown zodiacs={zodiacs} setSign={setSign} placeholder="what's your sign?" />
       <br />
       <button
         onChange={(event) =>

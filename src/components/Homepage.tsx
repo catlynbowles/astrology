@@ -1,34 +1,45 @@
 import { useEffect, useState } from "react";
-import { collection, getDocs, query, where } from "firebase/firestore";
-import { db } from "@/firebase";
 import Link from "next/link";
 import Form from "./Form";
+import { db } from "@/firebase";
+import {
+  collection,
+  getDocs,
+  query,
+} from "firebase/firestore";
+import Loading from "./Loading";
 
 export default function HomePage({ user }: any) {
   const [sign, setSign] = useState("");
-  // const [day, setDay] = useState("");
+  const [loading, setLoading] = useState(true)
 
-  const getThings = async () => {
-    const q = query(collection(db, "sign"), where("sign", "==", "libra"));
+  const getUserData = async () => {
+    // const docRef = doc(db, "sign", sign);
+    // const docSnap = await getDoc(docRef);
+
+    // if (docSnap.exists()) {
+    //   console.log("Document data:", docSnap.data());
+    // } else {
+    //   // doc.data() will be undefined in this case
+    //   console.log("No such document!");
+    // }
+    const q = query(collection(db, `sign`));
     const querySnapshot = await getDocs(q);
     querySnapshot.forEach((doc) => {
-      console.log(user.uid, "usr");
-      if (doc.data().user === user.uid) {
+      if (doc.data()["user"] === user.uid) {
         setSign(doc.data().sign);
-        console.log("heyyp");
+        setLoading(false)
       }
-      // doc.data() is never undefined for query doc snapshots
-      console.log(doc.id, " => ", doc.data());
     });
   };
 
   useEffect(() => {
-    getThings();
+    getUserData();
   }, [user, sign]);
 
   return (
     <div>
-      {sign ? (
+      {loading ? <Loading /> : sign ? (
         <div>
           <h1>Hello, {user.displayName.split(" ")[0]}!</h1>
           <Link href={`/horoscope/${sign}/today`}>
@@ -36,7 +47,7 @@ export default function HomePage({ user }: any) {
           </Link>
         </div>
       ) : (
-        <Form user={user} setSign={setSign}/>
+        <Form user={user} setSign={setSign} />
       )}
     </div>
   );

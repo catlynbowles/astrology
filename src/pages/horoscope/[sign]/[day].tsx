@@ -1,13 +1,21 @@
 import { useRouter } from "next/router";
 import { useEffect, useRef, useState } from "react";
-import { fetchHoroscopeData } from "../../api/fetch";
-import { signs } from "@/pages/api/data";
+import { getZodiacs } from "@/pages/api/getZodiacs";
+import { fetchHoroscopeData } from "@/pages/api/fetch";
 import Loading from "@/components/Loading";
 import Prompt from "@/components/Prompt";
 import { HoroscopeType, HoroscopeDefaultValues } from "../../../types/types";
+import { db } from "@/firebase";
+import { getDocs, collection } from "firebase/firestore";
 
-export default function Results() {
+export default function TriviaQuestions() {
+  const router = useRouter();
+  const { sign, day } = router.query;
+  console.log(router.query);
+
   const randomSign = useRef("");
+  const zodiacs = useRef([]);
+  
   const [loading, setLoading] = useState(true);
   const [horoscope, setHoroscope] = useState<HoroscopeType>(
     HoroscopeDefaultValues
@@ -16,17 +24,25 @@ export default function Results() {
     HoroscopeDefaultValues
   );
 
-  const router = useRouter();
-  const { sign, day } = router.query;
+
+  const getZodiacs = async () => {
+    const querySnapshot = await getDocs(collection(db, "horoscopes"));
+    return querySnapshot.forEach((doc) => {
+      zodiacs.current = doc.data().zodiacs;
+    });
+  };
+
+  useEffect(() => {
+    getZodiacs()
+  }, []);
 
   useEffect(() => {
     if (sign && day) {
-      let filteredHoroscopes = signs.filter((symbol) => symbol !== sign);
+      let filteredHoroscopes = zodiacs.current.filter((symbol) => symbol !== sign);
       randomSign.current =
         filteredHoroscopes[
           Math.floor(Math.random() * filteredHoroscopes.length)
         ];
-
       Promise.all([
         fetchHoroscopeData(sign, day),
         fetchHoroscopeData(randomSign.current, day),

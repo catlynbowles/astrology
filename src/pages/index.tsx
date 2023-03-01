@@ -1,4 +1,3 @@
-import styles from "@/styles/Home.module.css";
 import Homepage from "@/components/Homepage";
 import { onAuthStateChanged, signInWithPopup } from "firebase/auth";
 import { useEffect, useState } from "react";
@@ -25,7 +24,7 @@ export default function LandingPage() {
 
   return (
     <>
-      <main className={styles.main}>
+      <main>
         <Homepage user={user} />
       </main>
     </>
