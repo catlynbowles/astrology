@@ -1,16 +1,32 @@
-import { Inter } from '@next/font/google'
-import styles from '@/styles/Home.module.css'
-import AstrologyQuery from '@/components/AstrologyQuery'
+import Homepage from "@/components/Homepage";
+import { onAuthStateChanged, signInWithPopup } from "firebase/auth";
+import { useEffect, useState } from "react";
+import { auth, provider } from "@/firebase";
 
-const inter = Inter({ subsets: ['latin'] })
+export default function LandingPage() {
+  const [user, setUser] = useState({});
 
-export default function Home() {
-  
+  const signIn = () => {
+    signInWithPopup(auth, provider)
+      .then((result) => {
+        const user = result.user;
+      })
+      .catch((error) => {
+        console.log(error, "error");
+      });
+  };
+
+  useEffect(() => {
+    onAuthStateChanged(auth, (user) => {
+      user ? setUser(user) : signIn();
+    });
+  }, []);
+
   return (
     <>
-      <main className={styles.main}>
-        <AstrologyQuery />
+      <main>
+        <Homepage user={user} />
       </main>
     </>
-  )
+  );
 }

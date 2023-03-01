@@ -1,4 +1,4 @@
-export function fetchHoroscopeData(sign?: string | string[], day?: string | string[]) {
+export function fetchHoroscopeData(sign: string | string[], day: string | string[]) {
   const options = {
     method: "POST",
     headers: {
